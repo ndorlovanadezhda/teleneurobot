@@ -656,7 +656,7 @@ async def process_user_answer(message: Message, state: FSMContext):
     level = res[1]
     story = res[0]
     points = res[2]
-
+    sumalfa = 0
     alfa = 0
     if level == "все плохо" or level == "затрудняюсь ответить":
         alfa = 1
@@ -679,6 +679,7 @@ async def process_user_answer(message: Message, state: FSMContext):
     evaluation = res.content.strip()
     if evaluation == "Верно":
         points = points + alfa
+        sumalfa += alfa 
     await message.answer(f"Оценка: {evaluation}")
 
     id = int(message.from_user.id)
@@ -686,7 +687,7 @@ async def process_user_answer(message: Message, state: FSMContext):
         await db.execute("UPDATE users SET quizpoints = ? WHERE id = ?", (points, id))
         await db.commit()
 
-    await message.answer(f'Количество заработанных баллов: {alfa}\n')
+    await message.answer(f'Количество заработанных баллов: {sumalfa}\n')
     points = 0
     await state.clear()
 
